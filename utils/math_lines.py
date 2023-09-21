@@ -21,6 +21,9 @@ class Line:
 
     def calc_distance(self):
         return math.sqrt((self.p1.x-self.p2.x)**2 + (self.p1.y-self.p2.y)**2)
+    
+    def calc_distance_from_points(p1:Point, p2:Point):
+        return math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2)
 
      
     def __check_point_inside_line_range(self, p:Point):

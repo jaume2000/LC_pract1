@@ -8,5 +8,5 @@ with open('./datos.txt') as f:
     map_width, map_height = map(lambda x:int(x), f.readline().split())
     obstacles = [] 
     Map(100,100, Point(1,1), Point(10,10), []).getIntersections(Line(10,-10,10,100), True)
-    Individuo([Line(0,0,10,10)])
+    print(Individuo([Point(0,0), Point(0,10), Point(10,10)]).calcLongitude())
     
