@@ -27,7 +27,9 @@ class Line:
 
      
     def __check_point_inside_line_range(self, p:Point):
-        return (self.p1.y <= p.y <= self.p2.y or self.p2.y <= p.y <= self.p1.y) and (self.p1.x <= p.x <= self.p2.x or self.p2.x <= p.x <= self.p1.x)
+        value1 = (self.p1.y <= p.y <= self.p2.y or self.p2.y <= p.y <= self.p1.y)
+        value2 = (self.p1.x <= p.x <= self.p2.x or self.p2.x <= p.x <= self.p1.x)
+        return value1 and value2
 
     def intersect_lines(self, other):
 
@@ -44,7 +46,7 @@ class Line:
             #La otra no es vertical
             else:
                 x = self.p1.x
-                y = other.m*x + other.b
+                y = round(other.m*x + other.b,5)
                 p = Point(x,y)
 
                 return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)
@@ -52,10 +54,10 @@ class Line:
         #La otra es una linea vertical y la nuestra no lo es
         elif other.m == 'inf':
             x = other.p1.x
-            y = self.m*x + self.b
+            y = round(self.m*x + self.b, 5)
             p = Point(x,y)
 
-            return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)
+            return other.__check_point_inside_line_range(p) and self.__check_point_inside_line_range(p)
         
         #Ninguna es vertical
         else:
@@ -70,8 +72,8 @@ class Line:
             #Caso general, no tienen la misma pendiente, intersecarán si o si.
             else:
                 #Punto de intersección
-                x = (other.b - self.b)/(self.m-other.m)
-                y = (self.m*x + self.b)
+                x = round((other.b - self.b)/(self.m-other.m),5)
+                y = round(self.m*x + self.b, 5)
                 p = Point(x,y)
                 #Hay que comprobar que el punto de intersección entra en los rangos de las líneas.
                 return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)

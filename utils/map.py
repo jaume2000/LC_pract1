@@ -1,10 +1,13 @@
 from utils.math_lines import Line, Point
+from utils.indiviuo import Individuo
 
 class Map :
-    def __init__(self, width, height, startPoint:Point, endPoint:Point, obstacleLines:list=[]):
-        self.start = startPoint
+    def __init__(self, width, height, startPoint:Point, endPoint:Point, obstacleLines:list[Line]=[]):
+        self.startPoint = startPoint
         self.endPoint = endPoint
         self.obstacles = obstacleLines
+        self.width = width
+        self.height = height
 
         self.obstacles.append(Line(0,0, 0,width))
         self.obstacles.append(Line(0,width, height,width))
@@ -23,3 +26,10 @@ class Map :
                 print(str(l))
         return res
     
+    def getIndividualCollisions(self, indiv:Individuo):
+
+        res = []
+        path = indiv.getPath()
+        for i in range(len(path)-1):
+            res.extend(self.getIntersections(Line(path[i].x,path[i].y, path[i+1].x,path[i+1].y)))
+        return res

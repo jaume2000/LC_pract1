@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 from utils.math_lines import Line
 format = "{:<10} {:<22} {:<22} {:<10} {:<10}"
 i=0
@@ -53,3 +56,5 @@ test(Line(-3,1,-3,2), Line(-3,5,-3,1.5), True)
 test(Line(-3,1,-3,2), Line(-3,1.5,-3,0), True)
 test(Line(-3,1,-3,2), Line(-3,3,-3,0), True)
 print("Ended tests")
+
+test(Line(27,25,30,38), Line(30,0,30,70), True)
