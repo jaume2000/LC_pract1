@@ -22,7 +22,8 @@ class Line:
     def calc_distance(self):
         return math.sqrt((self.p1.x-self.p2.x)**2 + (self.p1.y-self.p2.y)**2)
 
-    def check_point_inside_line_range(self, p:Point):
+     
+    def __check_point_inside_line_range(self, p:Point):
         return (self.p1.y <= p.y <= self.p2.y or self.p2.y <= p.y <= self.p1.y) and (self.p1.x <= p.x <= self.p2.x or self.p2.x <= p.x <= self.p1.x)
 
     def intersect_lines(self, other):
@@ -34,7 +35,7 @@ class Line:
 
                 #Ambas líneas son verticales en la misma x. Hay que mirar si sus tramos intersecan.
                 if self.p1.x == other.p1.x:
-                    return self.check_point_inside_line_range(other.p1) or self.check_point_inside_line_range(other.p2) or other.check_point_inside_line_range(self.p1) or other.check_point_inside_line_range(self.p2)
+                    return self.__check_point_inside_line_range(other.p1) or self.__check_point_inside_line_range(other.p2) or other.__check_point_inside_line_range(self.p1) or other.__check_point_inside_line_range(self.p2)
                 else:
                     return False
             #La otra no es vertical
@@ -43,15 +44,15 @@ class Line:
                 y = other.m*x + other.b
                 p = Point(x,y)
 
-                return self.check_point_inside_line_range(p) and other.check_point_inside_line_range(p)
+                return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)
                 
         #La otra es una linea vertical y la nuestra no lo es
         elif other.m == 'inf':
             x = other.p1.x
-            y = self.m*x + other.b
+            y = self.m*x + self.b
             p = Point(x,y)
 
-            return self.check_point_inside_line_range(p) and other.check_point_inside_line_range(p)
+            return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)
         
         #Ninguna es vertical
         else:
@@ -59,7 +60,7 @@ class Line:
             if self.m == other.m:
                 if self.b == other.b:
                     #Hay que comprobar si las rectas se intersecan.
-                    return self.check_point_inside_line_range(other.p1) or self.check_point_inside_line_range(other.p2) or other.check_point_inside_line_range(self.p1) or other.check_point_inside_line_range(self.p2)
+                    return self.__check_point_inside_line_range(other.p1) or self.__check_point_inside_line_range(other.p2) or other.__check_point_inside_line_range(self.p1) or other.__check_point_inside_line_range(self.p2)
                 #Son pararlelas, no intersecan
                 else:
                     return False
@@ -70,4 +71,4 @@ class Line:
                 y = (self.m*x + self.b)
                 p = Point(x,y)
                 #Hay que comprobar que el punto de intersección entra en los rangos de las líneas.
-                return self.check_point_inside_line_range(p) and other.check_point_inside_line_range(p)
+                return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)

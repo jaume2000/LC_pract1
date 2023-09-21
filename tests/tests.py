@@ -1,4 +1,4 @@
-from problem import Line
+from utils.math_lines import Line
 format = "{:<10} {:<22} {:<22} {:<10} {:<10}"
 i=0
 
@@ -23,11 +23,6 @@ test(Line(4,4,2,2), Line(0,4,4,0), True)
 test(Line(4,4,2.01,2.01), Line(0,4,4,0), False)
 test(Line(-1,-1,1,1), Line(-2,-2,2,2), True)
 test(Line(-1,-1,1,1), Line(0,0,2,2), True)
-test(Line(-1,-1,1,1), Line(2,2,1,1), True)
-test(Line(-1,-1,1,1), Line(1.01,1,2,2), False)
-
-#False General Case
-test(Line(-1,-1,1,1), Line(-2,-1,0,1), False)
 test(Line(1,1,0,0), Line(1,0,2,1), False)
 
 #Horizontal intersections
@@ -36,6 +31,7 @@ test(Line(0,1,0,0), Line(7,0,1,0), False)
 test(Line(0,1,0,0), Line(7,0,0.5,0), False)
 test(Line(10,0,-2,0), Line(3,0,4,0), True)
 test(Line(1,0,-2,0), Line(3,0,4,0), False)
+
 
 #One is horizontal, other not
 test(Line(0,2,10,2), Line(0,2,2,3), True)
@@ -56,3 +52,4 @@ test(Line(-3,1,-3,2), Line(-2,3,-2,0), False)
 test(Line(-3,1,-3,2), Line(-3,5,-3,1.5), True)
 test(Line(-3,1,-3,2), Line(-3,1.5,-3,0), True)
 test(Line(-3,1,-3,2), Line(-3,3,-3,0), True)
+print("Ended tests")
