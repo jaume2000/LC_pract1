@@ -60,12 +60,20 @@ def startExperiment(ge_map,plot_n_individuals):
     # Mostrar el gráfico
     plt.show()
 
-
+def buildMap(file):
+    with open(file) as f:
+        width, height = [int(i) for i in f.readline().split()]
+        start_x, start_y = [int(i) for i in f.readline().split()]
+        end_x, end_y = [int(i) for i in f.readline().split()]
+    
+        
 #Definir y empezar el experimento
 
 incremental_lines_map = [Line(10+5*i,50-2*i -2,10+5*i,50+2*i +2) for i in range(17)]
+one_path_map = [Line(10+5*i, 20 - (20 * (i % 2)) -2,10+5*i,80 + (20 * ((i+1) % 2)) +2) for i in range(17)]
 
-ge_map = Map(500,500, Point(5,50), Point(95,50), [Line(30,50,50,50),Line(80,50,70,50),Line(60,52,60,48)] )
+ge_map = Map(100,100, Point(5,50), Point(95,50), one_path_map )
 myGE = ElasticRopeGE(500, 200, 5, 5, map=ge_map)
-startExperiment(ge_map, plot_n_individuals=4)
+#startExperiment(ge_map, plot_n_individuals=4)
 
+buildMap("./datos.txt")
