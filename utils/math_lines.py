@@ -38,7 +38,6 @@ class Vector:
         if isinstance(other, float) or isinstance(other, int):
             return Vector(self.x * other, self.y * other)
         else:
-            print("Not xd", self, other)
             return self.x * other.x + self.y * other.y
 class Line: 
 

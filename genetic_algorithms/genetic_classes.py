@@ -209,72 +209,89 @@ class ElasticRopeGE(IGeneticAlgorithm):
         if(len(first_indiv_cols)==0):
             return [first_individual]
 
-        need_fix = {(first_individual, first_indiv_cols)}
-        while(len(need_fix)>0):
-            next_need_fix = set()
+        need_fix = [(first_individual, first_indiv_cols)]
+
+        def algorithm(translated_point,changed_path):
+                if self.map.pointInsideMap(translated_point) and translated_point not in changed_path:
+                    changed_path.insert(colls[0][0]+1, translated_point)
+
+                    indiv = Individuo(changed_path)
+                    #print(ind, "\t| Added at ", colls[0][0]+1,"|", indiv)
+                    #print("Collision info", colls)
+                    next_colls = self.map.getIndividualCollisions(indiv)
+                    if len(next_colls) > 0:
+                        #print("Accepted 1")
+                        print("Pushed path", indiv)
+                        need_fix.append((indiv,next_colls))
+                    else:
+                        print("Acepted factible solution", indiv)
+                        indiv.score = indiv.calcLongitude()
+                        start_individuals.append(indiv)
+        
+        def calculate_individual1(collided_line):
+            changed_path = ind.getPath()
+            move_vector = -Vector.round(collided_line.u * (self.point_distance), self.map_size_order)
+            translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
+            algorithm(translated_point,changed_path)
+        
+        def calculate_individual2(collided_line):
+            changed_path = ind.getPath()
+            move_vector = Vector.round(collided_line.u * (self.point_distance), self.map_size_order)
+            translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
+            algorithm(translated_point,changed_path)
+
+        while(len(need_fix)>0 and len(start_individuals) < self.start_population_size):
 
             # For all the individuals that need a fix:
-            for (ind,colls) in need_fix:
+            (ind,colls) = need_fix.pop()
                 #In the first section, we select the list of collisions and then choose the first collision.
-                collided_line = colls[0][1][0]
-                
 
-                def algorithm(translated_point,changed_path):
-                    if self.map.pointInsideMap(translated_point) and translated_point not in changed_path:
-                        changed_path.insert(colls[0][0]+1, translated_point)
+            i = 0
+            changed_path = ind.getPath()
+            collided_line = colls[0][1][i]
+            collision_segment = Line(changed_path[colls[0][0]].x,changed_path[colls[0][0]].y, changed_path[colls[0][0]+1].x,changed_path[colls[0][0]+1].y)
 
-                        indiv = Individuo(changed_path)
-                        #print(ind, "\t| Added at ", colls[0][0]+1,"|", indiv)
-                        #print("Collision info", colls)
-                        next_colls = self.map.getIndividualCollisions(indiv)
-                        if len(next_colls) > 0:
-                            #print("Accepted 1")
-                            next_need_fix.add((indiv,next_colls))
-                        else:
-                            indiv.score = indiv.calcLongitude()
-                            start_individuals.append(indiv)
-            
-                #Si la colisión es de dos segmentos que están en la misma linea, pillamos el punto más cercano de la colisión y añadimos al path dos opciones: por arriba y por abajo.
+            while collided_line.v.ortogonals()[0] * collision_segment.v == 0 and i < len(colls[0][1])-1:
+                i+=1
+                collided_line = colls[0][1][i]
+
+            #Si la colisión es de dos segmentos que están en la misma linea, pillamos el punto más cercano de la colisión y añadimos al path dos opciones: por arriba y por abajo.
+            collision_segment = Line(changed_path[colls[0][0]].x,changed_path[colls[0][0]].y, changed_path[colls[0][0]+1].x,changed_path[colls[0][0]+1].y)
+            if collided_line.v.ortogonals()[0] * collision_segment.v == 0:
+                ortogonals = collided_line.u.ortogonals()
+
+                move_vector = Vector.round(ortogonals[0] * (self.point_distance), self.map_size_order)
+
+                translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
+                algorithm(translated_point,changed_path)
+
                 changed_path = ind.getPath()
-                collision_segment = Line(changed_path[colls[0][0]].x,changed_path[colls[0][0]].y, changed_path[colls[0][0]+1].x,changed_path[colls[0][0]+1].y)
-                if collided_line.v.ortogonals()[0] * collision_segment.v == 0:
-                    ortogonals = collided_line.u.ortogonals()
+                translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
+                algorithm(translated_point,changed_path)
 
-                    move_vector = Vector.round(ortogonals[0] * (self.point_distance), self.map_size_order)
+                move_vector = -move_vector
 
-                    translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
-                    algorithm(translated_point,changed_path)
+                changed_path = ind.getPath()
+                translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
+                algorithm(translated_point,changed_path)
 
-                    changed_path = ind.getPath()
-                    translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
-                    algorithm(translated_point,changed_path)
+                changed_path = ind.getPath()
+                translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
+                algorithm(translated_point,changed_path)
 
-                    move_vector = -move_vector
-
-                    changed_path = ind.getPath()
-                    translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
-                    algorithm(translated_point,changed_path)
-
-                    changed_path = ind.getPath()
-                    translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
-                    algorithm(translated_point,changed_path)
-
-                    pass
+                pass
+            else:
+                if random.random() < 0.5:
+                    calculate_individual1(collided_line)
+                    calculate_individual2(collided_line)
                 else:
-                    #Calculate new Individual 1
-                    move_vector = -Vector.round(collided_line.u * (self.point_distance), self.map_size_order)
-                    translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
-                    algorithm(translated_point,changed_path)
-                    
+                    calculate_individual2(collided_line)
+                    calculate_individual1(collided_line)
 
-                    #Calculate new Individual 2
-                    changed_path = ind.getPath()
-                    move_vector = Vector.round(collided_line.u * (self.point_distance), self.map_size_order)
-                    translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
-                    algorithm(translated_point,changed_path)
+
+                
                     
                 #print("NEXT ITER")
-            need_fix = next_need_fix
             #End while    
         print("Start with: ", len(start_individuals))
         return start_individuals

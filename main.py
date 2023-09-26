@@ -5,7 +5,7 @@ from utils.math_lines import Point, Line
 import matplotlib.pyplot as plt
 import threading
 
-def startExperiment(plot_n_individuals):
+def startExperiment(ge_map,plot_n_individuals):
 #Preparamos la animación
 
     fig, ax = plt.subplots()
@@ -22,8 +22,8 @@ def startExperiment(plot_n_individuals):
 
 
     #Opciones básicas del gráfico
-    plt.xlim(0, 100)
-    plt.ylim(0, 100)
+    plt.xlim(0, ge_map.width)
+    plt.ylim(0, ge_map.height)
     plt.xlabel('Eje X')
     plt.ylabel('Eje Y')
     plt.title('Línea de (0,0) a (10,10)')
@@ -63,7 +63,9 @@ def startExperiment(plot_n_individuals):
 
 #Definir y empezar el experimento
 
-ge_map = Map(100,100, Point(5,50), Point(95,50), [Line(10,50,25,50),Line(30,20,30,80),Line(40,20,40,80),Line(50,20,50,80),Line(60,20,60,80),Line(70,20,70,80),Line(80,20,80,80),Line(90,20,90,80)])
-myGE = ElasticRopeGE(1000, 200, 2, 5, map=ge_map)
-startExperiment(plot_n_individuals=4)
+incremental_lines_map = [Line(10+5*i,50-2*i -2,10+5*i,50+2*i +2) for i in range(17)]
+
+ge_map = Map(500,500, Point(5,50), Point(95,50), [Line(30,50,50,50),Line(80,50,70,50),Line(60,52,60,48)] )
+myGE = ElasticRopeGE(500, 200, 5, 5, map=ge_map)
+startExperiment(ge_map, plot_n_individuals=4)
 
