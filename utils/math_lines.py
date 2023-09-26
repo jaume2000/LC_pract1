@@ -24,6 +24,8 @@ class Vector:
 
     def normalize(self):
         return Vector(self.x / self.longitude, self.y / self.longitude)
+    def ortogonals(self):
+        return (Vector(self.y, -self.x), Vector(-self.y, self.x))
     def __str__(self):
         return '('+str(self.x) + ', '+ str(self.y) +')'
     def __add__(self, other):
@@ -32,8 +34,12 @@ class Vector:
         return Vector(-self.x, -self.y)
     def __sub__(self,other):
         return Vector(self.x-other.x, self.y-other.y)
-    def __mul__(self, scalar):
-        return Vector(self.x * scalar, self.y * scalar)
+    def __mul__(self, other):
+        if isinstance(other, float) or isinstance(other, int):
+            return Vector(self.x * other, self.y * other)
+        else:
+            print("Not xd", self, other)
+            return self.x * other.x + self.y * other.y
 class Line: 
 
     def __str__(self):

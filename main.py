@@ -63,7 +63,7 @@ def startExperiment(plot_n_individuals):
 
 #Definir y empezar el experimento
 
-ge_map = Map(100,100, Point(5,50), Point(95,50), [Line(10,20,10,80),Line(20,20,20,80),Line(30,20,30,80),Line(40,20,40,80),Line(50,20,50,80),Line(60,20,60,80),Line(70,20,70,80),Line(80,20,80,80),Line(90,20,90,80)])
-myGE = ElasticRopeGE(1000, 200, 1, 5, map=ge_map)
+ge_map = Map(100,100, Point(5,50), Point(95,50), [Line(10,50,25,50),Line(30,20,30,80),Line(40,20,40,80),Line(50,20,50,80),Line(60,20,60,80),Line(70,20,70,80),Line(80,20,80,80),Line(90,20,90,80)])
+myGE = ElasticRopeGE(1000, 200, 2, 5, map=ge_map)
 startExperiment(plot_n_individuals=4)
 
