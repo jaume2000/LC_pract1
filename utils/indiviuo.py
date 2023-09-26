@@ -15,6 +15,9 @@ class Individuo:
         for p in self.__points:
             res+= "("+str(p.x)+", "+str(p.y)+") ->"
         return res
+    
+    def __hash__(self) -> int:
+        return hash(tuple(self.__points))
 
     def calcLongitude(self):
         sum = 0
@@ -28,6 +31,8 @@ class Individuo:
     
     def addPoint(self, p:Point):
         self.__points.append(p)
+    def hasRepeatedPoints(self):
+        return len(set(self.__points)) != len(self.__points)
     
     
 

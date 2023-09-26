@@ -24,12 +24,19 @@ class Map :
             print("Intesercted lines:")
             for l in res:
                 print(str(l))
-        return res
+        return tuple(res)
     
-    def getIndividualCollisions(self, indiv:Individuo):
+    def getIndividualCollisions(self, indiv:Individuo)->list[(int,Line)]:
 
         res = []
         path = indiv.getPath()
+        
         for i in range(len(path)-1):
-            res.extend(self.getIntersections(Line(path[i].x,path[i].y, path[i+1].x,path[i+1].y)))
-        return res
+            intersections = self.getIntersections(Line(path[i].x,path[i].y, path[i+1].x,path[i+1].y))
+            
+            if len(intersections)>0:
+                res.append( (i, intersections) )
+        return tuple(res)
+
+    def pointInsideMap(self, p:Point):
+        return 0 < p.x < self.width and 0 < p.y < self.height
