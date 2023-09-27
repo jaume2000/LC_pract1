@@ -9,11 +9,6 @@ class Map :
         self.width = width
         self.height = height
 
-        self.obstacles.append(Line(0,0, 0,width))
-        self.obstacles.append(Line(0,width, height,width))
-        self.obstacles.append(Line(height,width, height, 0))
-        self.obstacles.append(Line(height,0, 0,0))
-
     def addObstacle(self,obs:Line):
         self.obstacles.append(obs)
 
@@ -26,17 +21,27 @@ class Map :
                 print(str(l))
         return tuple(res)
     
-    def getIndividualCollisions(self, indiv:Individuo)->list[(int,Line)]:
+    def getIndividualCollisions(self, indiv:Individuo)->tuple[(int,Line)]:
 
         res = []
         path = indiv.getPath()
         
         for i in range(len(path)-1):
             intersections = self.getIntersections(Line(path[i].x,path[i].y, path[i+1].x,path[i+1].y))
-            
             if len(intersections)>0:
                 res.append( (i, intersections) )
         return tuple(res)
+    
+    def isIndividualFactible(self, indiv:Individuo)->bool:
+
+        path = indiv.getPath()
+        i = 0
+        while i < len(path)-1:
+            intersections = self.getIntersections(Line(path[i].x,path[i].y, path[i+1].x,path[i+1].y))
+            if len(intersections)>0:
+                return False
+            i+=1
+        return True
 
     def pointInsideMap(self, p:Point):
         return 0 < p.x < self.width and 0 < p.y < self.height

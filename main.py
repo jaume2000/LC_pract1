@@ -18,7 +18,7 @@ def startExperiment(ge_map,plot_n_individuals):
     for obs in ge_map.obstacles:
         obs_x = [obs.p1.x, obs.p2.x]
         obs_y = [obs.p1.y, obs.p2.y]
-        plt.plot(obs_x, obs_y, color='black')
+        plt.plot(obs_x, obs_y, color='black', linewidth=4)
 
 
     #Opciones básicas del gráfico
@@ -35,7 +35,7 @@ def startExperiment(ge_map,plot_n_individuals):
                 path = myGE.population[i].getPath()
                 if i >= len(suboptimal_lines):
                     #Update line
-                    new_line, = ax.plot([p.x for p in path],[p.y for p in path], c='gray', linewidth=1, zorder=1)
+                    new_line, = ax.plot([p.x for p in path],[p.y for p in path], linewidth=1, zorder=1)
                     suboptimal_lines.append(new_line)
                 else:
                     #Create line
@@ -65,15 +65,39 @@ def buildMap(file):
         width, height = [int(i) for i in f.readline().split()]
         start_x, start_y = [int(i) for i in f.readline().split()]
         end_x, end_y = [int(i) for i in f.readline().split()]
-    
+        lines = []
+        
+        l = [int(i) for i in f.readline().split()]
+
+        while l:
+            x1,y1,x2,y2 = l
+            lines.append(Line(x1,y1,x2,y2))
+            l = [int(i) for i in f.readline().split()]
+
+    return Map(width, height, Point(start_x, start_y), Point(end_x, end_y), lines)
         
 #Definir y empezar el experimento
 
-incremental_lines_map = [Line(10+5*i,50-2*i -2,10+5*i,50+2*i +2) for i in range(17)]
+incremental_lines_map = [Line(10+5*i,50 - 1.3**(i),10+5*i,50 + 1.3**(i)) for i in range(15)]
+
 one_path_map = [Line(10+5*i, 20 - (20 * (i % 2)) -2,10+5*i,80 + (20 * ((i+1) % 2)) +2) for i in range(17)]
 
-ge_map = Map(100,100, Point(5,50), Point(95,50), one_path_map )
-myGE = ElasticRopeGE(500, 200, 5, 5, map=ge_map)
-#startExperiment(ge_map, plot_n_individuals=4)
+cuadratic_line_map = []
+gap = 2
+for i in range(6):
+    x = 10 + 5*i
+    barrier_size = 80*(2**-i)
+    for j in range(2**i):
 
-buildMap("./datos.txt")
+
+        y1 = 10 + j*barrier_size
+        y2 = 10 + barrier_size+ j*barrier_size - gap
+        l = Line(x, y1, x, y2)
+        cuadratic_line_map.append(l)
+
+
+ge_map = Map(100,100, Point(5,50), Point(95,50), incremental_lines_map )
+ge_map = buildMap("./maps/test_map1.txt")
+
+myGE = ElasticRopeGE(100, 200, 10, 5, map=ge_map)
+startExperiment(ge_map, plot_n_individuals=20)

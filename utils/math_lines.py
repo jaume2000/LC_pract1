@@ -1,5 +1,10 @@
 
 import math
+
+round_factor = 6
+def round_num(num):
+    return round(num, 6)
+    
 class Point:
     def __init__(self, x,y):
         self.x = x
@@ -12,6 +17,9 @@ class Point:
         return hash((self.x,self.y))
     def __eq__(self, other) -> bool:
         return self.x == other.x and self.y == other.y
+    
+    def copy(self):
+        return Point(self.x,self.y)
     
 class Vector:
     def __init__(self, x,y):
@@ -80,7 +88,7 @@ class Line:
             #La otra no es vertical
             else:
                 x = self.p1.x
-                y = round(other.m*x + other.b, 10)
+                y = round_num(other.m*x + other.b)
                 p = Point(x,y)
 
                 return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)
@@ -88,7 +96,7 @@ class Line:
         #La otra es una linea vertical y la nuestra no lo es
         elif other.m == 'inf':
             x = other.p1.x
-            y = round(self.m*x + self.b, 10)
+            y = round_num(self.m*x + self.b)
             p = Point(x,y)
 
             return other.__check_point_inside_line_range(p) and self.__check_point_inside_line_range(p)
@@ -106,8 +114,9 @@ class Line:
             #Caso general, no tienen la misma pendiente, intersecarán si o si.
             else:
                 #Punto de intersección
-                x = round((other.b - self.b)/(self.m-other.m),5)
-                y = round(self.m*x + self.b, 5)
+                x = (other.b - self.b)/(self.m-other.m)
+                y = round_num(self.m*x + self.b)
+                x = round_num(x)
                 p = Point(x,y)
                 #Hay que comprobar que el punto de intersección entra en los rangos de las líneas.
                 return self.__check_point_inside_line_range(p) and other.__check_point_inside_line_range(p)

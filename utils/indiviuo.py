@@ -29,10 +29,22 @@ class Individuo:
     def getPath(self):
         return self.__points.copy()
     
+    def getPathLength(self):
+        return len(self.__points)
+    
+    def erasePoint(self, i):
+        if 0 < i < len(self.__points):
+            del self.__points[i]
+    
     def addPoint(self, p:Point):
         self.__points.append(p)
     def hasRepeatedPoints(self):
         return len(set(self.__points)) != len(self.__points)
+    
+    def copy(self):
+        ind = Individuo([p.copy() for p in self.__points], self.gen)
+        ind.score = self.score
+        return ind
     
     
 
