@@ -1,11 +1,11 @@
 from matplotlib.animation import FuncAnimation
-from genetic_algorithms.genetic_classes import PrintingGE, RandomGE, ElasticRopeGE
+from genetic_algorithms.genetic_classes import PrintingGE, RandomGE, ElasticRopeGE, NoneGE
 from utils.map import Map
 from utils.math_lines import Point, Line
 import matplotlib.pyplot as plt
 import threading
 
-def startExperiment(ge_map,plot_n_individuals):
+def startExperiment(ge,ge_map,plot_n_individuals):
 #Preparamos la animación
 
     fig, ax = plt.subplots()
@@ -31,18 +31,18 @@ def startExperiment(ge_map,plot_n_individuals):
     def update(frame):
         # Actualiza la gráfica con los datos
         for i in range(1,plot_n_individuals):
-            if i < len(myGE.population) and i < plot_n_individuals:
-                path = myGE.population[i].getPath()
+            if i < len(ge.population) and i < plot_n_individuals:
+                path = ge.population[i].getPath()
                 if i >= len(suboptimal_lines):
                     #Update line
                     new_line, = ax.plot([p.x for p in path],[p.y for p in path], linewidth=1, zorder=1)
                     suboptimal_lines.append(new_line)
                 else:
                     #Create line
-                    suboptimal_lines[i-1].set_xdata([p.x for p in path])
+                    suboptimal_lines[i-1].smyGEet_xdata([p.x for p in path])
                     suboptimal_lines[i-1].set_ydata([p.y for p in path])
-        if myGE.fittest != None:
-            fittest_path = myGE.fittest.getPath()
+        if ge.fittest != None:
+            fittest_path = ge.fittest.getPath()
             fittest_line.set_ydata(list(map(lambda p: p.y, fittest_path)))
             fittest_line.set_xdata(list(map(lambda p: p.x, fittest_path)))
 
@@ -52,7 +52,7 @@ def startExperiment(ge_map,plot_n_individuals):
 
 
     #Crea
-    algorithm_thread = threading.Thread(target=myGE.start)
+    algorithm_thread = threading.Thread(target=ge.start)
 
     algorithm_thread.start()
 
@@ -82,22 +82,12 @@ incremental_lines_map = [Line(10+5*i,50 - 1.3**(i),10+5*i,50 + 1.3**(i)) for i i
 
 one_path_map = [Line(10+5*i, 20 - (20 * (i % 2)) -2,10+5*i,80 + (20 * ((i+1) % 2)) +2) for i in range(17)]
 
-cuadratic_line_map = []
-gap = 2
-for i in range(6):
-    x = 10 + 5*i
-    barrier_size = 80*(2**-i)
-    for j in range(2**i):
-
-
-        y1 = 10 + j*barrier_size
-        y2 = 10 + barrier_size+ j*barrier_size - gap
-        l = Line(x, y1, x, y2)
-        cuadratic_line_map.append(l)
-
-
 ge_map = Map(100,100, Point(5,50), Point(95,50), incremental_lines_map )
 ge_map = buildMap("./maps/test_map1.txt")
 
-myGE = ElasticRopeGE(100, 200, 10, 5, map=ge_map)
-startExperiment(ge_map, plot_n_individuals=20)
+ge_map = Map(100,100, Point(5,50), Point(95,50), [Line(50,20,50,80)])
+
+myGE = NoneGE(ge_map)
+#myGE = ElasticRopeGE(1, 1, 50, 5, 5, map=ge_map)
+
+startExperiment(myGE,ge_map, plot_n_individuals=10)
