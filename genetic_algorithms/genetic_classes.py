@@ -198,7 +198,7 @@ class NoneGE(IGeneticAlgorithm):
 
 
     def population_generation_func(self) -> list[Individuo]:
-        ind = Individuo([self.map.startPoint, self.map.startPoint])
+        ind = Individuo([self.map.startPoint, self.map.startPoint],0)
         ind.score = 0
         return [ind]
 
@@ -221,18 +221,21 @@ class NoneGE(IGeneticAlgorithm):
         #Console display at the end of the cycle.
         pass
 
-
 class ElasticRopeGE(IGeneticAlgorithm):
 
-    def __init__(self, start_population_size, stop_gen, converge_gens,point_distance, map_size_order, map):
+    def __init__(self, start_population_size, stop_gen, converge_gens, cross_prob, cross_method, mutation_prob, mutation_traslation_radius, max_mutations_per_ind, mutation_method, point_distance, map_size_order, map):
         super().__init__(map)
         self.start_population_size = start_population_size
         self.stop_gen = stop_gen
         self.point_distance = point_distance
         self.map_size_order = map_size_order
         self.converge_gens = converge_gens
-        self.cross_prob = 0.1
-        self.mutation_prob = 0.5
+        self.cross_prob = cross_prob
+        self.cross_method = cross_method
+        self.mutation_prob = mutation_prob
+        self.mutation_traslation_radius = mutation_traslation_radius
+        self.max_mutations_per_ind = max_mutations_per_ind
+        self.mutation_method = mutation_method
         
     def calculate_factibles(self, non_factible_list:list[(Individuo,tuple)], n_solutions):
         
@@ -269,7 +272,7 @@ class ElasticRopeGE(IGeneticAlgorithm):
             algorithm(translated_point,changed_path)
 
         while(len(need_fix)>0 and len(factible_solutions) < n_solutions):
-
+        
             # For all the individuals that need a fix:
             (ind,colls) = need_fix.pop()
                 #In the first section, we select the list of collisions and then choose the first collision.
@@ -325,12 +328,33 @@ class ElasticRopeGE(IGeneticAlgorithm):
         #self.map
         #IMPORTANT TO SET the indiviaul.score!!!!
 
+        fixing_start_individuals = [] 
+        start_individuals =[] 
         first_individual = Individuo([self.map.startPoint,self.map.endPoint], 0)
         first_indiv_cols = self.map.getIndividualCollisions(first_individual)
-        if(len(first_indiv_cols)==0):
-            return [first_individual]
+        
 
-        start_individuals = self.calculate_factibles([(first_individual, first_indiv_cols)], self.start_population_size)
+        fixing_start_individuals.append((first_individual, first_indiv_cols))
+
+        for _ in range(10):
+            
+            path =[self.map.startPoint] 
+
+            for _ in range(random.randint(1,15)):
+                x = round(random.random()*self.map.width, self.map_size_order)
+                y = round(random.random()*self.map.height, self.map_size_order)
+
+                path.append(Point(x,y))
+            
+            path.append(self.map.endPoint)
+
+            indiv = Individuo(path,0) 
+            cols = self.map.getIndividualCollisions(indiv)
+            if(len(cols)>0):
+                fixing_start_individuals.append((indiv,cols))
+            else:
+                start_individuals.append(indiv)
+        start_individuals.extend(self.calculate_factibles(fixing_start_individuals, self.start_population_size))
  
         print("Start with: ", len(start_individuals))
         return start_individuals
@@ -339,7 +363,7 @@ class ElasticRopeGE(IGeneticAlgorithm):
         #No discriminamos, no filtramos ninguno
         return self.population
 
-    def cross_func1(self, selected_pop) -> list[Individuo]:
+    def cross_func_1(self, selected_pop) -> list[Individuo]:
         #Elegimos dos individuos al azar (puede ser el mismo)
         crossed = []
         selected_pop_set = set(selected_pop)
@@ -374,7 +398,7 @@ class ElasticRopeGE(IGeneticAlgorithm):
 
         return crossed
     
-    def cross_func2(self, selected_pop) -> list[Individuo]:
+    def cross_func_2(self, selected_pop) -> list[Individuo]:
         selected_pop_set = set(selected_pop)
         crossed_sons = []
 
@@ -404,22 +428,81 @@ class ElasticRopeGE(IGeneticAlgorithm):
         
         return crossed_sons
 
-
-
     def cross_func(self, selected_pop) -> list[Individuo]:
-        return self.cross_func2(selected_pop)
 
+        if int(self.cross_method) == 1:
+            return self.cross_func_1(selected_pop)
+        else:
+            return self.cross_func_2(selected_pop)
+
+
+   #Selection of the mutation algorithm 
     def mutation_func(self, crossed_pop:list[Individuo]) -> list[Individuo]:
-        #Elminación de puntos
+        if int(self.mutation_method) == 1:
+            return self.mutation_func_1(crossed_pop)
+        else:
+            return self.mutation_func_2(crossed_pop)
+    
 
+   #Mutación por eliminación de un numero aleatorio puntos
+    def mutation_func_1(self, crossed_pop:list[Individuo]) -> list[Individuo]:
+        #Elminación de puntos
         mutation_list = [p for p in self.population]
         mutation_list.extend([p for p in crossed_pop])
         mutated = []
-        for i,ind in enumerate(mutation_list):
-            if ind.getPathLength() > 2 and random.random() < self.mutation_prob:
-                selected_ind = ind.copy()
-                selected_ind.erasePoint(random.randint(1, selected_ind.getPathLength()-2))
 
+        maxErasingPoints = 1
+
+        for i,ind in enumerate(mutation_list):
+
+            if random.random() < self.mutation_prob:
+                n_deletions = int(random.random()*(maxErasingPoints) +1)
+
+                for _ in range(n_deletions):
+
+                    if ind.getPathLength() > 2:
+                        selected_ind = Individuo(ind.getPath(),self.gen)
+                        selected_ind.erasePoint(random.randint(1, selected_ind.getPathLength()-2))
+
+                        #Si no es factible, lo reparamos
+                        ind_colls = self.map.getIndividualCollisions(selected_ind)
+                        if len(ind_colls) > 0:
+                            fixes = self.calculate_factibles([(mutation_list[i],ind_colls)],1)
+                            if len(fixes) > 0:
+                                #print("Mutated!")
+                                mutated.append(fixes[0])
+
+                        #Una vez tenemos un individuo factible, calculamos su puntuación
+                        selected_ind.score = selected_ind.calcLongitude()
+                    else:
+                        break
+                    
+        return mutated
+
+    
+    def mutation_func_2(self, crossed_pop:list[Individuo]) -> list[Individuo]:
+        mutation_list = [p for p in self.population]
+        mutation_list.extend([p for p in crossed_pop])
+        mutated = []
+
+        for i,ind in enumerate(mutation_list):
+
+            if random.random() < self.mutation_prob:
+    
+                n_translations = int(random.random()*(self.max_mutations_per_ind) +1)
+                
+                path = ind.getPath()
+
+                for _ in range(n_translations):
+                    
+                    point_index = random.randint(1, len(path)-2)
+                    point = path[point_index]
+
+                    new_x = round(min(max((random.random()*2-1)*self.mutation_traslation_radius + point.x, 1), self.map.width-1), self.map_size_order)
+                    new_y = round(min(max((random.random()*2-1)*self.mutation_traslation_radius + point.y, 1), self.map.height-1), self.map_size_order)
+                    path[point_index] = Point(new_x, new_y)
+
+                selected_ind = Individuo(path, self.gen)
                 #Si no es factible, lo reparamos
                 ind_colls = self.map.getIndividualCollisions(selected_ind)
                 if len(ind_colls) > 0:
@@ -427,9 +510,17 @@ class ElasticRopeGE(IGeneticAlgorithm):
                     if len(fixes) > 0:
                         #print("Mutated!")
                         mutated.append(fixes[0])
-                #Una vez tenemos un individuo factible, calculamos su puntuación
-                selected_ind.score = selected_ind.calcLongitude()
+
+                    #Una vez tenemos un individuo factible, calculamos su puntuación
+                    selected_ind.score = selected_ind.calcLongitude()
+                else:
+                    selected_ind.score = selected_ind.calcLongitude()
+                    mutated.append(selected_ind)
+
         return mutated
+
+
+
     
     def replace_func(self, selected, crossed_pop, mutated_pop) -> list[Individuo]:
         #Nos quedamos con el mismo tamaño: la población inicial.
@@ -450,5 +541,6 @@ class ElasticRopeGE(IGeneticAlgorithm):
     def display_func(self) -> None:
         if self.fin:
             print("END - Fittest fount at generation ", self.gen,"with score of",self.fittest.score)
+            print(f"The path has {self.fittest.getPathLength()} points")
         else:
-            print("Generation",self.gen, "Fittest:", self.fittest.score)
+            print(f"Generation {self.gen} Fittest: {round(self.fittest.score,2)} Converge condition: {self.gen - self.fittest.gen}/{self.converge_gens}")

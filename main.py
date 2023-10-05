@@ -39,7 +39,7 @@ def startExperiment(ge,ge_map,plot_n_individuals):
                     suboptimal_lines.append(new_line)
                 else:
                     #Create line
-                    suboptimal_lines[i-1].smyGEet_xdata([p.x for p in path])
+                    suboptimal_lines[i-1].set_xdata([p.x for p in path])
                     suboptimal_lines[i-1].set_ydata([p.y for p in path])
         if ge.fittest != None:
             fittest_path = ge.fittest.getPath()
@@ -85,9 +85,21 @@ one_path_map = [Line(10+5*i, 20 - (20 * (i % 2)) -2,10+5*i,80 + (20 * ((i+1) % 2
 ge_map = Map(100,100, Point(5,50), Point(95,50), incremental_lines_map )
 ge_map = buildMap("./maps/test_map1.txt")
 
-ge_map = Map(100,100, Point(5,50), Point(95,50), [Line(50,20,50,80)])
+#ge_map = Map(100,100, Point(5,50), Point(95,50), [Line(50,20,50,80)])
 
-myGE = NoneGE(ge_map)
-#myGE = ElasticRopeGE(1, 1, 50, 5, 5, map=ge_map)
+#myGE = NoneGE(ge_map)
+myGE = ElasticRopeGE(
+    start_population_size=500,
+    stop_gen=       400,
+    converge_gens=  50,
+    cross_prob=     0.1,
+    cross_method=2,
+    mutation_prob=  0.1,
+    mutation_traslation_radius=300,
+    max_mutations_per_ind=5,
+    mutation_method=2,
+    map_size_order=5,
+    point_distance=10,
+    map=ge_map)
 
 startExperiment(myGE,ge_map, plot_n_individuals=10)
