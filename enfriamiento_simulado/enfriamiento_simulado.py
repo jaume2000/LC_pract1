@@ -59,7 +59,11 @@ class ISimulatedCooling(metaclass=ABCMeta):
     @abstractmethod
     def select_neighbour(self, neighbours:list[Individuo]) -> Individuo:
         pass
-
+    
+    @abstractmethod
+    def calc_sel_prob(self, sel_neighbour):
+        pass
+    
     @abstractmethod
     def decrease_temp(self):
         pass
@@ -122,6 +126,7 @@ class TraslatingPoints(ISimulatedCooling):
         start_individuals.extend(calculate_factibles(self.map, self.gen, self.point_distance, self.map_size_order, fixing_start_individuals, self.start_population_size))
 
         self.order_individuals(start_individuals)
+        self.worst = start_individuals[-1]
 
         return start_individuals[0]
 
@@ -160,11 +165,21 @@ class TraslatingPoints(ISimulatedCooling):
     #The neighbours can be better or worse than the individual.
     def select_neighbour(self, neighbours:list[Individuo]) -> Individuo:
         #Select the best neighbour
+        if self.worst.score > neighbours[-1].score:
+            self.worst = neighbours[-1]
         return neighbours[0]
+
+    #sel_neighbour is worst than actual
+    def calc_sel_prob(self, sel_neighbour):
+        diff = self.fittest - self.worst
+        if diff == 0:
+            return 0
+        
+        return sel_neighbour.score / diff
+        
 
     def decrease_temp(self):
         self.t = self.t*0.95
-        pass
 
     def stop_func(self) -> bool:
         pass
