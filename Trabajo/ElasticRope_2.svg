@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1088"
+   height="640"
+   viewBox="0 0 287.86665 169.33334"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="ElasticRope.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.3 (1:1.3+202307231459+0e150ed6c4)"
+   sodipodi:docname="ElasticRope_2.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="true"
+     inkscape:zoom="0.30362538"
+     inkscape:cx="421.57213"
+     inkscape:cy="363.93532"
+     inkscape:window-width="1366"
+     inkscape:window-height="691"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="0,169.33333"
+       orientation="0,2048"
+       id="guide5"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="541.86666,169.33333"
+       orientation="512,0"
+       id="guide6"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="541.86666,33.866666"
+       orientation="0,-2048"
+       id="guide7"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="0,33.866666"
+       orientation="-512,0"
+       id="guide8"
+       inkscape:locked="false" />
+    <inkscape:grid
+       id="grid8"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="8.4666666"
+       spacingy="8.4666666"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#fdfdfd;fill-opacity:1;stroke:#000000;stroke-width:3.96875;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1"
+       width="135.46666"
+       height="135.46666"
+       x="8.466671"
+       y="16.933329"
+       inkscape:export-filename="Problema1.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:10.5833;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 60.690735,84.666658 33.312462,-5e-6"
+       id="path16" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#00ffff;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="M 33.866672,84.666654 H 118.53335"
+       id="path8" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1.32292;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="path5"
+       cx="33.866669"
+       cy="84.344856"
+       r="8.144865" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1.32292;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="path5-9"
+       cx="118.53334"
+       cy="84.666656"
+       r="8.144865" />
+    <rect
+       style="fill:#fdfdfd;fill-opacity:1;stroke:#000000;stroke-width:3.96875;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-7"
+       width="135.46666"
+       height="135.46666"
+       x="143.93333"
+       y="16.933329"
+       inkscape:export-filename="Problema1.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:10.5833;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 196.15741,84.666659 33.31246,-5e-6"
+       id="path16-4" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#00ffff;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 169.33335,84.666655 59.26666,25.399995 25.40001,-25.399995"
+       id="path8-5"
+       sodipodi:nodetypes="ccc" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1.32292;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="path5-2"
+       cx="169.33333"
+       cy="84.344856"
+       r="8.144865" />
+    <circle
+       style="fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1.32292;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="path5-9-5"
+       cx="254"
+       cy="84.666656"
+       r="8.144865" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ffff00;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 169.33335,84.666655 59.26666,-25.399997 25.40001,25.399997"
+       id="path17"
+       sodipodi:nodetypes="ccc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#0000ff;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 169.33335,84.666655 25.39999,25.399995 59.26668,-25.399995"
+       id="path18"
+       sodipodi:nodetypes="ccc" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 169.33335,84.666655 25.39999,-25.399997 59.26668,25.399997"
+       id="path19"
+       sodipodi:nodetypes="ccc" />
+  </g>
+</svg>

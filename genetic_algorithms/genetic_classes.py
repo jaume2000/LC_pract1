@@ -4,10 +4,10 @@ sys.path.append('../')
 from abc import abstractmethod
 from abc import ABCMeta
 from utils.indiviuo import Individuo
+from utils.math_lines import Point
 from utils.map import Map
-from utils.math_lines import Point, Line, Vector
 import random
-import math
+from utils.elastic_ropes import calculate_factibles
 
 class IGeneticAlgorithm(metaclass=ABCMeta):
 
@@ -26,7 +26,10 @@ class IGeneticAlgorithm(metaclass=ABCMeta):
         if self.fittest == None or self.fittest.score > self.population[0].score:
             self.fittest = self.population[0].copy()
 
-    def start(self):
+        self.results.append(self.fittest.score)
+
+    def start(self)->list[float]:
+        self.results = []
         self.fin = False
         self.population = self.population_generation_func()
         self.orderPopulation()
@@ -41,6 +44,8 @@ class IGeneticAlgorithm(metaclass=ABCMeta):
             self.display_func()
 
             self.gen+=1
+
+        return self.results
         
 
     @abstractmethod
@@ -236,93 +241,6 @@ class ElasticRopeGE(IGeneticAlgorithm):
         self.mutation_traslation_radius = mutation_traslation_radius
         self.max_mutations_per_ind = max_mutations_per_ind
         self.mutation_method = mutation_method
-        
-    def calculate_factibles(self, non_factible_list:list[(Individuo,tuple)], n_solutions):
-        
-        need_fix = non_factible_list.copy()
-        factible_solutions = []
-
-        def algorithm(translated_point,changed_path):
-                if self.map.pointInsideMap(translated_point) and translated_point not in changed_path:
-                    changed_path.insert(colls[0][0]+1, translated_point)
-
-                    indiv = Individuo(changed_path, self.gen)
-                    #print(ind, "\t| Added at ", colls[0][0]+1,"|", indiv)
-                    #print("Collision info", colls)
-                    next_colls = self.map.getIndividualCollisions(indiv)
-                    if len(next_colls) > 0:
-                        
-                        #print("Pushed path", indiv)
-                        need_fix.append((indiv,next_colls))
-                    else:
-                        #print("Acepted factible solution", indiv)
-                        indiv.score = indiv.calcLongitude()
-                        factible_solutions.append(indiv)
-        
-        def calculate_individual1(collided_line):
-            changed_path = ind.getPath()
-            move_vector = -Vector.round(collided_line.u * (self.point_distance), self.map_size_order)
-            translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
-            algorithm(translated_point,changed_path)
-        
-        def calculate_individual2(collided_line):
-            changed_path = ind.getPath()
-            move_vector = Vector.round(collided_line.u * (self.point_distance), self.map_size_order)
-            translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
-            algorithm(translated_point,changed_path)
-
-        while(len(need_fix)>0 and len(factible_solutions) < n_solutions):
-        
-            # For all the individuals that need a fix:
-            (ind,colls) = need_fix.pop()
-                #In the first section, we select the list of collisions and then choose the first collision.
-
-            i = 0
-            changed_path = ind.getPath()
-            collided_line = colls[0][1][i]
-            collision_segment = Line(changed_path[colls[0][0]].x,changed_path[colls[0][0]].y, changed_path[colls[0][0]+1].x,changed_path[colls[0][0]+1].y)
-
-            while collided_line.v.ortogonals()[0] * collision_segment.v == 0 and i < len(colls[0][1])-1:
-                i+=1
-                collided_line = colls[0][1][i]
-                
-
-            #Si la colisión es de dos segmentos que están en la misma linea, pillamos el punto más cercano de la colisión y añadimos al path dos opciones: por arriba y por abajo.
-            collision_segment = Line(changed_path[colls[0][0]].x,changed_path[colls[0][0]].y, changed_path[colls[0][0]+1].x,changed_path[colls[0][0]+1].y)
-            if collided_line.v.ortogonals()[0] * collision_segment.v == 0:
-                ortogonals = collided_line.u.ortogonals()
-
-                move_vector = Vector.round(ortogonals[0] * (self.point_distance), self.map_size_order)
-
-                translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
-                algorithm(translated_point,changed_path)
-
-                changed_path = ind.getPath()
-                translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
-                algorithm(translated_point,changed_path)
-
-                move_vector = -move_vector
-
-                changed_path = ind.getPath()
-                translated_point = Point(collided_line.p1.x + move_vector.x, collided_line.p1.y + move_vector.y)
-                algorithm(translated_point,changed_path)
-
-                changed_path = ind.getPath()
-                translated_point = Point(collided_line.p2.x + move_vector.x, collided_line.p2.y + move_vector.y)
-                algorithm(translated_point,changed_path)
-
-                pass
-            else:
-                if random.random() < 0.5:
-                    calculate_individual1(collided_line)
-                    calculate_individual2(collided_line)
-                else:
-                    calculate_individual2(collided_line)
-                    calculate_individual1(collided_line)
-            
-            #End while
-
-        return factible_solutions
 
     def population_generation_func(self) -> list[Individuo]:
         #self.map
@@ -354,7 +272,7 @@ class ElasticRopeGE(IGeneticAlgorithm):
                 fixing_start_individuals.append((indiv,cols))
             else:
                 start_individuals.append(indiv)
-        start_individuals.extend(self.calculate_factibles(fixing_start_individuals, self.start_population_size))
+        start_individuals.extend(calculate_factibles(self.map, self.gen, self.point_distance, self.map_size_order, fixing_start_individuals, self.start_population_size))
  
         print("Start with: ", len(start_individuals))
         return start_individuals
@@ -418,7 +336,7 @@ class ElasticRopeGE(IGeneticAlgorithm):
                     son_collisions = self.map.getIndividualCollisions(son)
                     if(len(son_collisions)>0):
                         #Curamos al hijo
-                        factible_sons = self.calculate_factibles([(son, son_collisions)], 4)
+                        factible_sons = calculate_factibles(self.map, self.gen, self.point_distance, self.map_size_order, [(son, son_collisions)], 4)
                         for s in factible_sons:
                             s.score = s.calcLongitude()
                             crossed_sons.append(s)
@@ -467,7 +385,7 @@ class ElasticRopeGE(IGeneticAlgorithm):
                         #Si no es factible, lo reparamos
                         ind_colls = self.map.getIndividualCollisions(selected_ind)
                         if len(ind_colls) > 0:
-                            fixes = self.calculate_factibles([(mutation_list[i],ind_colls)],1)
+                            fixes = calculate_factibles(self.map, self.gen, self.point_distance, self.map_size_order, [(mutation_list[i],ind_colls)],1)
                             if len(fixes) > 0:
                                 #print("Mutated!")
                                 mutated.append(fixes[0])
@@ -506,13 +424,13 @@ class ElasticRopeGE(IGeneticAlgorithm):
                 #Si no es factible, lo reparamos
                 ind_colls = self.map.getIndividualCollisions(selected_ind)
                 if len(ind_colls) > 0:
-                    fixes = self.calculate_factibles([(mutation_list[i],ind_colls)],1)
+                    fixes = calculate_factibles(self.map, self.gen, self.point_distance, self.map_size_order, [(mutation_list[i],ind_colls)],1)
                     if len(fixes) > 0:
                         #print("Mutated!")
                         mutated.append(fixes[0])
-
-                    #Una vez tenemos un individuo factible, calculamos su puntuación
-                    selected_ind.score = selected_ind.calcLongitude()
+                        selected_ind = fixes[0]
+                        selected_ind.score = selected_ind.calcLongitude()
+                        mutated.append(selected_ind)
                 else:
                     selected_ind.score = selected_ind.calcLongitude()
                     mutated.append(selected_ind)
