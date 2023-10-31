@@ -45,3 +45,21 @@ class Map :
 
     def pointInsideMap(self, p:Point):
         return 0 < p.x < self.width and 0 < p.y < self.height
+
+
+
+def buildMap(file):
+    with open(file) as f:
+        width, height = [int(i) for i in f.readline().split()]
+        start_x, start_y = [int(i) for i in f.readline().split()]
+        end_x, end_y = [int(i) for i in f.readline().split()]
+        lines = []
+        
+        l = [int(i) for i in f.readline().split()]
+
+        while l:
+            x1,y1,x2,y2 = l
+            lines.append(Line(x1,y1,x2,y2))
+            l = [int(i) for i in f.readline().split()]
+
+    return Map(width, height, Point(start_x, start_y), Point(end_x, end_y), lines)

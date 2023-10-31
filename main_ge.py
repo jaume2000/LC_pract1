@@ -1,6 +1,7 @@
 from matplotlib.animation import FuncAnimation
 from genetic_algorithms.genetic_classes import PrintingGE, RandomGE, ElasticRopeGE, NoneGE
 from utils.map import Map
+from utils.map import buildMap
 from utils.math_lines import Point, Line
 import matplotlib.pyplot as plt
 import threading
@@ -50,7 +51,7 @@ def startExperiment(ge,ge_map,plot_n_individuals):
             fittest_line.set_ydata(list(map(lambda p: p.y, fittest_path)))
             fittest_line.set_xdata(list(map(lambda p: p.x, fittest_path)))
 
-        fittest_results_y = myGE.results.copy()
+        fittest_results_y = ge.results.copy()
         fittest_results_x = list(range(0,len(fittest_results_y)))
         fittest_results.set_data(fittest_results_x,fittest_results_y)
         ax2.set_xlim(0, ge_map.width)
@@ -74,22 +75,6 @@ def startExperiment(ge,ge_map,plot_n_individuals):
     plt.show()
 
 #---------------------- END OF START EXPERIMENT ----------------------------------------
-
-def buildMap(file):
-    with open(file) as f:
-        width, height = [int(i) for i in f.readline().split()]
-        start_x, start_y = [int(i) for i in f.readline().split()]
-        end_x, end_y = [int(i) for i in f.readline().split()]
-        lines = []
-        
-        l = [int(i) for i in f.readline().split()]
-
-        while l:
-            x1,y1,x2,y2 = l
-            lines.append(Line(x1,y1,x2,y2))
-            l = [int(i) for i in f.readline().split()]
-
-    return Map(width, height, Point(start_x, start_y), Point(end_x, end_y), lines)
         
 #Definir y empezar el experimento
 
